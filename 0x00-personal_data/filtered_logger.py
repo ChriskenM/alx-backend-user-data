@@ -23,13 +23,18 @@ class RedactingFormatter(logging.Formatter):
         self.fields = fields
 
     def format(self, record: logging.LogRecord) -> str:
-        record.msg = filter_datum(self.fields, self.REDACTION, record.getMessage(), self.SEPARATOR)
+        record.msg = filter_datum(self.fields, self.REDACTION,
+                                  record.getMessage(), self.SEPARATOR)
         return super().format(record)
 
-def filter_datum(fields: List[str], redaction: str, message: str, separator: str) -> str:
+
+def filter_datum(fields: List[str], redaction: str, message: str,
+                 separator: str) -> str:
     """Returns the log message obfuscated."""
     pattern = r'({})=.*?{}'.format('|'.join(fields), re.escape(separator))
-    return re.sub(pattern, lambda m: m.group(0).split('=')[0] + '=' + redaction + separator, message)
+    return re.sub(pattern, lambda m: m.group(0).split('=')[0] +
+                  '=' + redaction + separator, message)
+
 
 def get_logger() -> logging.Logger:
     """Returns a logger with redacting formatter"""
@@ -44,6 +49,7 @@ def get_logger() -> logging.Logger:
 
     return logger
 
+
 def get_db() -> mysql.connector.connection.MySQLConnection:
     """Returns a MySQL connection object"""
     username = os.getenv('PERSONAL_DATA_DB_USERNAME', 'root')
@@ -52,7 +58,8 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
     database = os.getenv('PERSONAL_DATA_DB_NAME')
 
     if not database:
-        raise ValueError("Database name not provided in environment variable PERSONAL_DATA_DB_NAME")
+        raise ValueError("Database name not provided in environment variable "
+                         "PERSONAL_DATA_DB_NAME")
 
     return mysql.connector.connect(
         user=username,
@@ -60,6 +67,7 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
         host=host,
         database=database
     )
+
 
 def main() -> None:
     """Main function that retrieves and logs user data from the database."""
