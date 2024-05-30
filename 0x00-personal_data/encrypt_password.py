@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-
+"""
+Password encryption using bycrpt
+"""
 import bcrypt
 
 
