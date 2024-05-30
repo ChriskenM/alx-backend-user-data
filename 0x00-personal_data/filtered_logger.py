@@ -1,10 +1,16 @@
+#!/usr/bin/env python3
+"""
+Logger module
+"""
 import logging
 import re
 import os
 import mysql.connector
 from typing import List
 
+# PII_FIELDS constant at the root of the module
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
+
 
 class RedactingFormatter(logging.Formatter):
     """ Redacting Formatter class """
@@ -54,3 +60,22 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
         host=host,
         database=database
     )
+
+def main() -> None:
+    """Main function that retrieves and logs user data from the database."""
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM users;")
+
+    logger = get_logger()
+
+    for row in cursor:
+        msg = "; ".join([f"{key}={value}" for key, value in row.items()]) + ";"
+        logger.info(msg)
+
+    cursor.close()
+    db.close()
+
+
+if __name__ == "__main__":
+    main()
