@@ -6,6 +6,16 @@ from flask import abort, jsonify, request
 from models.user import User
 
 
+@app_views.route('/users/me', methods=['GET'], strict_slashes=False)
+def get_current_user():
+    """ Retrieves the authenticated User """
+    current_user = request.current_user
+    if current_user is None:
+        abort(404)
+
+    return jsonify(current_user.to_json()), 200
+
+
 @app_views.route('/users', methods=['GET'], strict_slashes=False)
 def view_all_users() -> str:
     """ GET /api/v1/users
