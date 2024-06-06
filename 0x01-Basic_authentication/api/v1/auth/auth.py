@@ -4,9 +4,9 @@
 from flask import request
 from typing import List, TypeVar
 
+
 class Auth:
     """Class to manage API authentication"""
-  
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
         """Public method to determine  authentication """
         if path is None or excluded_paths is None:
@@ -17,7 +17,7 @@ class Auth:
                     return False
             elif path == excluded_path:
                 return False
-    return True
+        return True
 
     def authorization_header(self, request=None) -> str:
         """Public method to get the authorization header"""
@@ -28,4 +28,3 @@ class Auth:
     def current_user(self, request=None) -> TypeVar('User'):
         """Public method to get the current user"""
         return None
-
