@@ -4,17 +4,22 @@
 from api.v1.views import app_views
 from flask import abort, jsonify, request
 from models.user import User
+from api.v1.app import auth
 
 
 @app_views.route('/users/me', methods=['GET'], strict_slashes=False)
 def get_current_user():
     """ Retrieves the authenticated User """
     current_user = request.current_user
-    if current_user is None:
+    user_id = auth.current_user(request)
+    if user_id is None:
         abort(404)
 
-    return jsonify(current_user.to_json()), 200
+    user = User.get(user_id)
+    if user is None:
+        abort(404)
 
+    return jsonify(user.to_dict()), 200
 
 @app_views.route('/users', methods=['GET'], strict_slashes=False)
 def view_all_users() -> str:
